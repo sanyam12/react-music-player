@@ -2,7 +2,7 @@ import React, { SetStateAction, useEffect, useRef, useState } from 'react';
 import Player from './components/player';
 import TrackList from './components/track_list';
 import ReactAudioPlayer from 'react-audio-player';
-import { Search } from 'lucide-react';
+import { Search, Menu } from 'lucide-react';
 
 export type ITrack = {
   id: number;
@@ -41,6 +41,7 @@ const App = () => {
   const [currentTime, setCurrentTime] = useState(0);
   const [backgroundColor, setBackgroundColor] = useState(currentTrack.accent);
   const [searchQuery, setSearchQuery] = useState('');
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const audioRef = useRef<ReactAudioPlayer>(null);
 
   useEffect(() => {
@@ -111,6 +112,7 @@ const App = () => {
     setCurrentTrack(track);
     setIsPlaying(true);
     setCurrentTime(0);
+    setIsSidebarOpen(false);
   };
 
   const handleListen = (currentTime: number) => {
@@ -128,43 +130,50 @@ const App = () => {
 
   return (
     <div
-      className="flex h-screen text-white transition-all duration-1000 ease-in-out"
+      className="flex flex-col md:flex-row h-screen text-white transition-all duration-1000 ease-in-out"
       style={{
         background: `linear-gradient(to right, ${backgroundColor}, #000000)`
       }}
     >
-      <div className="w-2/3 p-6 overflow-hidden flex flex-col">
-        <div className="flex items-center mb-6">
-          <button
-            className={`text-2xl font-bold mr-6 ${activeList === 'forYou' ? 'text-white' : 'text-gray-500'}`}
-            onClick={() => setActiveList('forYou')}
-          >
-            For You
-          </button>
-          <button
-            className={`text-2xl font-bold ${activeList === 'topTracks' ? 'text-white' : 'text-gray-500'}`}
-            onClick={() => setActiveList('topTracks')}
-          >
-            Top Tracks
+      <div className="md:w-2/3 p-4 md:p-6 overflow-hidden flex flex-col">
+        <div className="md:hidden mb-4">
+          <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="text-white">
+            <Menu size={24} />
           </button>
         </div>
-        <div className="relative mb-6">
-          <Search className="absolute left-3 top-2.5 text-gray-400" />
-          <input
-            type="text"
-            placeholder="Search Song, Artist"
-            className="w-full bg-gray-800 rounded-full py-2 px-4 pl-10 text-white"
-            value={searchQuery}
-            onChange={handleSearchChange}
+        <div className={`flex flex-col ${isSidebarOpen ? 'block' : 'hidden md:block'}`}>
+          <div className="flex items-center mb-6">
+            <button
+              className={`text-xl md:text-2xl font-bold mr-4 md:mr-6 ${activeList === 'forYou' ? 'text-white' : 'text-gray-500'}`}
+              onClick={() => setActiveList('forYou')}
+            >
+              For You
+            </button>
+            <button
+              className={`text-xl md:text-2xl font-bold ${activeList === 'topTracks' ? 'text-white' : 'text-gray-500'}`}
+              onClick={() => setActiveList('topTracks')}
+            >
+              Top Tracks
+            </button>
+          </div>
+          <div className="relative mb-6">
+            <Search className="absolute left-3 top-2.5 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search Song, Artist"
+              className="w-full bg-gray-800 rounded-full py-2 px-4 pl-10 text-white"
+              value={searchQuery}
+              onChange={handleSearchChange}
+            />
+          </div>
+          <TrackList
+            tracks={filteredTracks}
+            currentTrack={currentTrack}
+            onTrackSelect={handleTrackSelect}
           />
         </div>
-        <TrackList
-          tracks={filteredTracks}
-          currentTrack={currentTrack}
-          onTrackSelect={handleTrackSelect}
-        />
       </div>
-      <div className="w-1/3 p-6 flex flex-col justify-between">
+      <div className="md:w-1/3 p-4 md:p-6 flex flex-col justify-between">
         <Player
           currentTrack={currentTrack}
           isPlaying={isPlaying}
