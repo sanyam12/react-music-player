@@ -31,7 +31,7 @@ const TrackList: React.FC<ITrackList> = ({ tracks, currentTrack, onTrackSelect }
                     </div>
                     {/* //display duration in mm:ss */}
                     {/* <div className="text-gray-400">{formatDuration(duration)}</div> */}
-                    <div className="text-gray-400">12:3</div>
+                    {/* <div className="text-gray-400">12:3</div> */}
                 </div>
             ))}
         </div>
